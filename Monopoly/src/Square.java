@@ -1,20 +1,12 @@
-import java.util.ArrayList;
-
 public class Square {
-
     private String name;
     private int location;
+    private SquareType type;
 
-    private ArrayList<Square> squares = new ArrayList<>();
-
-    public Square() {
-
-    }
-
-    public Square(String name, int location) {
+    public Square(String name, int location, SquareType type) {
         this.name = name;
         this.location = location;
-
+        this.type = type;
     }
 
     public String getName() {
@@ -33,15 +25,11 @@ public class Square {
         this.location = location;
     }
 
-    public ArrayList<Square> getSquares() {
-        return squares;
+    public SquareType getType() {
+        return type;
     }
 
-    public void setSquares(ArrayList<Square> squares) {
-        this.squares = squares;
-    }
-
-    public void addSquare(Square square){
-        squares.add(square);
+    public void setType(SquareType type) {
+        this.type = type;
     }
 }

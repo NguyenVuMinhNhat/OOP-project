@@ -3,29 +3,44 @@ import java.util.Scanner;
 public class Plane extends Square {
 
     private int travelCost = 50000;
-    Board board = new Board();
-    Players player = new Players();
+    
+    Player player = new Player();
 
-    public void printLocation() {
-        int maxCities = Math.max(player.getOwnedCities().size(), board.getUnOwnedCities().size());
+    public Plane() {
+        super("World Tour", 30, SquareType.PLANE);
+
+    }
+
+    public void printLocation(Board board, Player player) {
+        int numUnownedCity = 0;
+        for(int i = 0; i < board.getSquares().size(); i++){
+            if(board.getSquares().get(i).getType() == SquareType.CITY){
+                City city = (City) board.getSquares().get(i);
+                if (!city.isOwned()) {
+                    numUnownedCity++;
+                }
+            }
+        }
+
+        int maxSize = Math.max(player.getOwnedProperty().size(), numUnownedCity);
         System.out.println("Please choose one of these options by typing the keyboard");
-        for (int i = 0; i < maxCities; i++) {
-            if (i < player.getOwnedCities().size()) {
+        for (int i = 0; i < maxSize; i++) {
+            if (player.getOwnedProperty().get(i).getType() == SquareType.CITY) {
                 System.out.print(
-                        player.getOwnedCities().get(i).getLocation() + ". " + player.getOwnedCities().get(i).getName());
+                        player.getOwnedProperty().get(i).getLocation() + ". " + player.getOwnedProperty().get(i).getName());
                 System.out.println();
             }
-            if (i < board.getUnOwnedCities().size()) {
+            if (i < board.getSquares().size()) {
                 System.out.printf(
-                        board.getUnOwnedCities().get(i).getLocation() + ". "
-                                + board.getUnOwnedCities().get(i).getName());
+                        board.getSquares().get(i).getLocation() + ". "
+                                + board.getSquares().get(i).getName());
                 System.out.println();
             }
         }
     }
 
-    public void travel(Players player) {
-        printLocation();
+    public void travel(Board board, Player player) {
+        printLocation(board, player);
         Scanner sc = new Scanner(System.in);
 
         int choice = 0;
@@ -34,17 +49,17 @@ public class Plane extends Square {
             try {
                 System.out.println("Your choice is: ");
                 choice = Integer.parseInt(sc.nextLine());
-                if (choice > 1 && choice <= player.getOwnedCities().size() + board.getUnOwnedCities().size()) {
+                if (choice > 1 && choice <= player.getOwnedProperty().size() + board.getSquares().size()) {
                     // Check if choice matches any owned city location
-                    for (int i = 0; i < player.getOwnedCities().size(); i++) {
-                        if (player.getOwnedCities().get(i).getLocation() == choice) {
+                    for (int i = 0; i < player.getOwnedProperty().size(); i++) {
+                        if (player.getOwnedProperty().get(i).getLocation() == choice) {
                             validChoice = true;
                             break;
                         }
                     }
                     if (!validChoice) {
-                        for (int i = 0; i < board.getUnOwnedCities().size(); i++) {
-                            if (board.getUnOwnedCities().get(i).getLocation() == choice) {
+                        for (int i = 0; i < board.getSquares().size(); i++) {
+                            if (board.getSquares().get(i).getLocation() == choice) {
                                 validChoice = true;
                                 break;
                             }
