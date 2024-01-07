@@ -17,9 +17,6 @@ public class Beach extends PropertySquare {
             case 3:
                 setPropertyValue(200000);
                 break;
-            case 4:
-                // win
-                break;
             default:
                 break;
         }

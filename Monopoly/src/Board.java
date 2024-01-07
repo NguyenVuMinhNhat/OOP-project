@@ -34,5 +34,31 @@ public class Board {
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
+
+    public boolean isGameOver(){
+        int activePlayers = 0;
+        for (Player player : players) {
+            if(!player.isBankRupt()){
+                activePlayers++;
+            }
+        }
+        if (activePlayers <= 1) {
+            return true;
+        }
+
+        for (Player player : players) {
+            if (player.totalNumberOfBeach() == 4) {
+                return true;
+            }
+        }
+
+        if (timer.getRemainingTime() == 0){
+            return true;
+        }
+
+        
+
+        return false;
+    }
     
 }

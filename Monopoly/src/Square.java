@@ -3,6 +3,15 @@ public class Square {
     private int location;
     private SquareType type;
 
+    public Square(String name){
+        this.name = name;
+    }
+
+    public Square(String name, int location){
+        this.name = name;
+        this.location = location;
+    }
+
     public Square(String name, int location, SquareType type) {
         this.name = name;
         this.location = location;

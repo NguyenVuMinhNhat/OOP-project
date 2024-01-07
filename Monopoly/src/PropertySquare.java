@@ -5,7 +5,7 @@ public abstract class PropertySquare extends Square {
     private Player owner;
     private int visitCost;
     private int initialValue;
-    private int level;
+    private int level = 1;
     private int upgradeCost;
 
     public PropertySquare(String name, int location,
