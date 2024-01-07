@@ -21,17 +21,28 @@ public class Beach extends PropertySquare {
                 break;
         }
     }
+    
 
     @Override
-    public int calculateUpgradeCost() {
+    public void calculateUpgradeCost() {
         // TODO Auto-generated method stub
-        return 0;
+        
     }
 
     @Override
-    public int calculatePropertyValue() {
+    public void calculatePropertyValue() {
         // TODO Auto-generated method stub
-        return 0;
+    }
+
+    @Override
+    public void calculateVisitCost() {
+        // TODO Auto-generated method stub
+        setVisitCost(getPropertyValue());
+    }
+
+    @Override
+    public int calculateSellValue() {
+        return (7 / 10) * getPropertyValue();
     }
 
 
