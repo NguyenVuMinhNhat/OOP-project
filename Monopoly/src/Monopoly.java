@@ -43,11 +43,16 @@ public class Monopoly {
         initializePlayerQueqe(board);
         while (!playerQueue.isEmpty()) {
             Player currentPlayer = playerQueue.poll();
-            if (!currentPlayer.isBankRupt()) {
+            if (!currentPlayer.isBankRupt() && !currentPlayer.isInJail()) {
                 System.out.println();
                 System.out.println();
                 takeTurn(currentPlayer, board);
             }
+            // else if (!currentPlayer.isBankRupt() && currentPlayer.isInJail()) {
+            //     System.out.println();
+            //     System.out.println();
+            //     currentPlayer.handleJailInteraction(null);
+            // }
 
             playerQueue.offer(currentPlayer);
             try {
@@ -82,7 +87,7 @@ public class Monopoly {
         if (currentLocation > 40) {
             player.setCash(player.getCash() + 200000);
             System.out.println("Player " + player.getName() + " complete a full round and receive $200,000");
-            System.out.println("Player " + player.getName() + "'s new balacnce: $" + player.getCash());
+            System.out.println("Player " + player.getName() + "'s new balance: $" + player.getCash());
             currentLocation -= 40;
             player.setLocation(currentLocation);
 
@@ -115,7 +120,7 @@ public class Monopoly {
             try {
                 System.out.println("Please choose number of players: ");
                 numPlayer = Integer.parseInt(sc.nextLine());
-                if (numPlayer >= 1 && numPlayer <= 4) {
+                if (numPlayer > 1 && numPlayer <= 4) {
                     System.out.println("Number of players: " + numPlayer);
                     break;
                 } else if (numPlayer == 1) {
@@ -139,7 +144,8 @@ public class Monopoly {
     }
 
     public void createSquare(Board board) {
-
+        Start Go = new Start();
+        board.getSquares().add(Go);
         City HongKong = new City("Hong Kong", 2, 50000, 1, 50000);
         board.getSquares().add(HongKong);
         City BangKok = new City("BangKok", 3, 55000, 1, 50000);
