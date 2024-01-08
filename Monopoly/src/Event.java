@@ -24,7 +24,7 @@ public class Event extends Square {
 
                     System.out.println("Player " + player.getName() + " successfully set World Cup at "
                             + player.getOwnedProperty().get(choice - 1).getName());
-                    System.out.println(player.getOwnedProperty().get(choice - 1).getName() + " visit value: $"
+                    System.out.println(player.getOwnedProperty().get(choice - 1).getName() + " visit cost increase to: $"
                             + player.getOwnedProperty().get(choice - 1).getVisitCost());
                     break;
                 } else {
@@ -43,8 +43,11 @@ public class Event extends Square {
 
     private void printCity(Player player) {
         for (int i = 0; i < player.getOwnedProperty().size(); i++) {
-            System.out.println((i + 1) + ". " + player.getOwnedProperty().get(i).getName() + "|Current visit cost: "
+            if (player.getOwnedProperty().get(i).getType() == SquareType.CITY) {
+                 System.out.println((i + 1) + ". " + player.getOwnedProperty().get(i).getName() + "|Current visit cost: "
                     + player.getOwnedProperty().get(i).getVisitCost());
+            }
+           
         }
     }
 
