@@ -44,7 +44,7 @@ public class Card extends Square {
 
     public void ReceiveMoneyChanceCard(Player player) {
         System.out.println("Player " + player.getName() + " get Money-Chance-Card");
-        int amountMoney = player.getCash() * 5 / 100;
+        int amountMoney = (player.getCash() * 5 )/ 100;
         System.out.println("Player " + player.getName() + " will receive $" + amountMoney);
         player.setCash(player.getCash() + amountMoney);
     }
@@ -54,7 +54,7 @@ public class Card extends Square {
         System.out.println("Please choose player to give cash.");
         for (int i = 0; i < board.getPlayers().size(); i++) {
             if (board.getPlayers().get(i).getName().equals(player.getName()) == false) {
-                System.out.println((i + 1) + ". Player: " + board.getPlayers().get(i).getName());
+                System.out.println((i + 1) + ". " + board.getPlayers().get(i).getName());
             }
         }
 
@@ -65,7 +65,7 @@ public class Card extends Square {
                 choice = Integer.parseInt(sc.nextLine());
                 if (choice <= board.getPlayers().size() && choice > 0) {
                     System.out.println(
-                            "Player " + player.getName() + " choose " + board.getPlayers().get(choice).getName());
+                            "Player " + player.getName() + " choose " + board.getPlayers().get(choice - 1).getName());
                     break;
                 } else {
                     System.out.println("Please input valid choice!!!");
@@ -85,7 +85,7 @@ public class Card extends Square {
         System.out.println("Please choose player to give city.");
         for (int i = 0; i < board.getPlayers().size(); i++) {
             if (board.getPlayers().get(i).getName().equals(player.getName()) == false) {
-                System.out.println((i + 1) + board.getPlayers().get(i).getName());
+                System.out.println((i + 1) + ". " + board.getPlayers().get(i).getName());
             }
         }
 
@@ -132,7 +132,7 @@ public class Card extends Square {
                     }
                 }
                 if (validChoice) {
-                    choosenCity = (City) board.getSquares().get(choiceCity - 2);
+                    choosenCity = (City) board.getSquares().get(choiceCity - 1);
                     System.out.println("Player " + player.getName() + " choose City: "
                             + choosenCity.getName());
                     break;
@@ -159,7 +159,7 @@ public class Card extends Square {
     public void GoBackThreeSpaceChanceCard(Player player, Board board) {
         System.out.println("Player " + player.getName() + " got a chance card to go back 3 spaces");
         player.setLocation(player.getLocation() - 3);
-
+        System.out.println("Player " + player.getName() + "'s location change to " + player.getLocation());
     }
 
     public void GoToJailChanceCard(Player player, Board board) {
