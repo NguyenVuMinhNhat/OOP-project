@@ -5,14 +5,14 @@ public abstract class PropertySquare extends Square {
     private Player owner;
     private int visitCost;
     private int initialValue;
-    private int level = 1;
+    private int level;
     private int upgradeCost;
 
     public PropertySquare(String name, int location,
             int initialValue) {
         super(name, location, SquareType.PROPERTY);
         this.initialValue = initialValue;
-       
+
     }
 
     public PropertySquare(String name, int location,
@@ -79,22 +79,16 @@ public abstract class PropertySquare extends Square {
         this.propertyValue = propertyValue;
     }
 
-    public int calculateLevel() {
-        return level++;
-    }
+   
 
-    public abstract int calculateUpgradeCost();
+    public abstract void calculateUpgradeCost();
 
-    public abstract int calculatePropertyValue();
+    public abstract void calculatePropertyValue();
 
     public abstract void calculatePropertyValue(Player player);
 
-    public int calculateVisitCost() {
-        return 2 * calculatePropertyValue();
-    }
+    public abstract void calculateVisitCost();
 
-    public int calculateSellValue() {
+    public abstract int calculateSellValue();
 
-        return 7 / 10 * calculatePropertyValue();
-    }
 }
