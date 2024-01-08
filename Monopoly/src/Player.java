@@ -158,7 +158,7 @@ public class Player {
 
     public void interactWithSquare(Board board) {
 
-        Square currentSquare = board.getSquares().get(getLocation() - 2);
+        Square currentSquare = board.getSquares().get(getLocation() - 1);
         if (currentSquare instanceof PropertySquare) {
             handlePropertyInteraction((PropertySquare) currentSquare, board);
         } else if (currentSquare instanceof Tax) {
@@ -180,9 +180,13 @@ public class Player {
     private void handlePropertyInteraction(PropertySquare propertySquare, Board board) {
         System.out.println(
                 "Player " + name + " step on " + propertySquare.getName());
+
         if (propertySquare.isOwned()) { // check if property is owned or not?
             if (!ownedProperty.contains(propertySquare)) { // if property is owned by other player, then
+
                 int payAmount = propertySquare.getVisitCost();
+                System.out.println("|Property: " + propertySquare.getName() + "|Visit cost: "
+                        + propertySquare.getVisitCost() + "|Level: " + propertySquare.getLevel() + "|");
                 System.out.println(name + " pays rent of $" + payAmount + " to " + propertySquare.getOwner().getName());
                 if (getCash() < payAmount) {// if player cash does not enough to pay
                     System.out.println(name + " does not have enough money to pay!!!");
@@ -195,12 +199,40 @@ public class Player {
                 }
                 setCash(getCash() - payAmount);
                 System.out.println(name + "'s new balance: " + getCash());
+                if (getCash() > propertySquare.getPropertyValue() && propertySquare.getType() == SquareType.CITY
+                        && propertySquare.getLevel() < 5) {
+                    System.out.println("Do you want to buy this city?");
+                    System.out.println("1. Yes");
+                    System.out.println("0. No");
+                    while (true) {
+                        try {
+                            System.out.println("Your choice:");
+                            int choice = Integer.parseInt(sc.nextLine());
+                            if (choice == 1) {
+                                buyPropertyFromOtherPlayer(propertySquare.getOwner(), propertySquare);
+                            } else if (choice == 0) {
+                                System.out.println("You choose exit.");
+                                break;
+                            } else {
+                                System.out.println("Please input 0 or 1!!!");
+                            }
+                            break;
+                        } catch (Exception e) {
+                            System.out.println("Please input an integer!!!");
+                            ;
+                        }
+                    }
+
+                } else {
+                    System.out.println("Player " + getName() + " do not have enough money to buy this property from "
+                            + propertySquare.getOwner().getName());
+                }
             } else {
                 for (int i = 0; i < board.getSquares().size(); i++) {
                     Square square = board.getSquares().get(i);
                     if (square.getType() == SquareType.PROPERTY.CITY) {
                         PropertySquare property = (PropertySquare) square;
-                        if (property.getLevel() <= 5) {
+                        if (property.getLevel() < 5) {
                             System.out.println("Upgrade cost: $" + property.getUpgradeCost());
                             System.out.println("Player " + name + " balance: $" + getCash());
                             System.out.println("Do you want to upgrade this city?");
@@ -219,7 +251,7 @@ public class Player {
                                                     + propertySquare.getName() + " to level "
                                                     + propertySquare.getLevel());
                                             System.out
-                                                    .println("Player " + getName() + "'s new balacnce: $" + getCash());
+                                                    .println("Player " + getName() + "'s new balance: $" + getCash());
 
                                         } else {
                                             System.out.println(name + " do not have enough cash to upgrade "
@@ -238,6 +270,7 @@ public class Player {
                             break;
                         } else {
                             System.out.println("This property has reached highest level.");
+                            break;
                         }
 
                     }
@@ -246,6 +279,7 @@ public class Player {
             }
         } else {
             System.out.println(name + " landed on an unowned property.");
+            System.out.println(propertySquare.toString());
             System.out.println("Buy cost: $" + propertySquare.getInitialValue());
             System.out.println("Player " + name + " balance: $" + getCash());
             System.out.println("Do you want to buy it?");
@@ -280,6 +314,30 @@ public class Player {
         }
     }
 
+    private void buyPropertyFromOtherPlayer(Player otherPlayer, PropertySquare propertySquare) {
+        int sellValue = propertySquare.getPropertyValue();
+        System.out.println(sellValue);
+        int tax = sellValue / 10;
+        System.out.println(tax);
+
+        System.out.println("Player " + getName() + " buy " + propertySquare.getName() + " from " + otherPlayer.getName()
+                + " with $" + sellValue);
+        System.out.println("Tax: $" + tax + " (10% property value).");
+
+        System.out.println("Player " + getName() + " pay $" + sellValue);
+        setCash(getCash() - sellValue);
+        System.out.println("Player " + getName() + "'s new balance: $" + getCash());
+
+        System.out.println("Player " + otherPlayer.getName() + " receive $" + (sellValue - tax));
+        otherPlayer.setCash(otherPlayer.getCash() + (sellValue - tax));
+        System.out.println("Player " + otherPlayer.getName() + "'s new balance: $" + otherPlayer.getCash());
+
+        otherPlayer.ownedProperty.remove(propertySquare);
+        ownedProperty.add(propertySquare);
+        propertySquare.setOwner(this);
+
+    }
+
     public void sellPropertiesToCoverRent(int rentAmount) {
         Scanner scanner = new Scanner(System.in);
 
@@ -306,9 +364,11 @@ public class Player {
                     PropertySquare selectedProperty = ownedProperty.get(choice - 1);
                     selectedProperties.add(selectedProperty);
                     System.out.println("Selected property: " + selectedProperty.getName());
+
                 } else {
                     System.out.println("Invalid choice. Please enter a valid number.");
                 }
+                break;
             }
 
             for (PropertySquare selectedProperty : selectedProperties) {
@@ -329,61 +389,83 @@ public class Player {
                 System.out.println("Player " + name + " don't have enough money to afford the fee.");
                 break;
             }
+            
         }
 
     }
 
     private void buyProperty(PropertySquare property) {
-        ownedProperty.add(property);
-        setCash(getCash() - property.getInitialValue());
-        property.setOwned(true);
-        property.setOwner(this);
-        property.setVisitCost(property.calculateVisitCost());
-        property.setPropertyValue(property.calculatePropertyValue());
+        if (property.getType() == SquareType.BEACH) {
+            ownedProperty.add(property);
+            setCash(getCash() - property.getInitialValue());
+            property.setOwned(true);
+            property.setOwner(this);
+            property.calculatePropertyValue(this);
+
+            System.out.println(property.getPropertyValue());
+            property.calculateVisitCost();
+            System.out.println(property.getVisitCost());
+        } else {
+            ownedProperty.add(property);
+            setCash(getCash() - property.getInitialValue());
+            property.setOwned(true);
+            property.setOwner(this);
+            property.calculatePropertyValue();
+
+            System.out.println(property.getPropertyValue());
+            property.calculateVisitCost();
+            System.out.println(property.getVisitCost());
+        }
+
     }
 
     private void upgradeCity(PropertySquare property) {
         setCash(getCash() - property.getUpgradeCost());
-        property.setLevel(property.calculateLevel());
-        property.setPropertyValue(cash);
+        property.setLevel(property.getLevel() + 1);
+        property.calculatePropertyValue();
+        property.calculateVisitCost();
     }
 
     // Tax interaction
     public void handleTaxInteraction(Tax tax, Board board) {
         System.out.println("Player " + name + " step on Tax");
-        int totalTax = tax.calculateTotalTax(this, board);
+        tax.setTotalTax(tax.calculateTotalTax(this, board));
         Iterator<Card> iterator = ownedCard.iterator();
         while (iterator.hasNext()) {
             Card card = iterator.next();
             if (card.getCardType() == CardType.TAX_REDUCE) {
                 System.out.println("Player " + name + " use Tax Reduce Card");
                 System.out.println("The total tax will reduce by 50%");
-                totalTax = tax.calculateTotalTax(this, board) / 2;
+                tax.setTotalTax(tax.calculateTotalTax(this, board) / 2);
                 iterator.remove();
                 break;
             }
         }
 
-        if (getCash() >= totalTax) {
-            System.out.println("Player " + getName() + " pay $" + totalTax + " for tax.");
+        if (getCash() >= tax.getTotalTax()) {
+            System.out.println("Player " + getName() + " pay $" + tax.getTotalTax() + " for tax.");
 
         } else {
             System.out.println("Player " + name + " do not have enough money to pay tax.");
             System.out.println("Player " + name + " has to sell properties.");
-            sellPropertiesToCoverRent(totalTax);
-            if (getCash() >= totalTax) {
+            sellPropertiesToCoverRent(tax.getTotalTax());
+            if (getCash() >= tax.getTotalTax()) {
                 handleTaxInteraction(tax, board);
             } else {
                 setBankrupt(true);
             }
         }
-        setCash(getCash() - totalTax);
+        setCash(getCash() - tax.getTotalTax());
         System.out.println("Player " + name + "'s new balance: $" + getCash());
     }
 
     // Plane interaction
     public void handlePlaneInteraction(Plane plane, Board board, Player currentPlayer) {
         System.out.println("Player " + name + " landed on World Tour");
+        if (ownedProperty.size() == 0) {
+            System.out.println("Player " + getName() + " do not have any property to travel");
+            return;
+        }
         if (currentPlayer.getCash() >= 50000) {
             System.out.println("Do you want to use World Tour? Cost: $50000");
             System.out.println("1. Yes");
@@ -416,7 +498,7 @@ public class Player {
 
     public void handleJailInteraction(Jail jail) {
         System.out.println(name + " landed on Jail!");
-
+        boolean alreadyRolled = false;
         for (Card card : ownedCard) {
             if (card.getCardType() == CardType.OUT_OF_JAIL) {
                 System.out.println("Player " + name + " has Out Of Jail card.");
@@ -425,29 +507,37 @@ public class Player {
             } else {
                 inJail = true;
             }
+
         }
         if (inJail) {
-            System.out.println(name + " is in Jail. Try to roll doubles to get out.");
+            System.out.println(name + " is in Jail.");
+            if (!alreadyRolled) {
+                System.out.println(name + " is in Jail. Try to roll doubles to get out.");
 
-            int diceRoll1 = rollDice();
-            int diceRoll2 = rollDice();
+                int diceRoll1 = rollDice();
+                int diceRoll2 = rollDice();
 
-            System.out.println("Dice Roll 1: " + diceRoll1);
-            System.out.println("Dice Roll 2: " + diceRoll2);
+                System.out.println("Dice Roll 1: " + diceRoll1);
+                System.out.println("Dice Roll 2: " + diceRoll2);
 
-            if (diceRoll1 == diceRoll2) {
-                System.out.println("Congratulations! " + name + " rolled doubles and got out of Jail.");
-                inJail = false;
-                jailTurn = 0;
+                if (diceRoll1 == diceRoll2) {
+                    System.out.println("Congratulations! " + name + " rolled doubles and got out of Jail.");
+                    inJail = false;
+                    jailTurn = 0;
+                } else {
+                    System.out.println("Sorry, " + name + " didn't roll doubles. You are still in Jail.");
+                    jailTurn++;
+                }
             } else {
-                System.out.println("Sorry, " + name + " didn't roll doubles. You are still in Jail.");
-                jailTurn++;
+                System.out.println(
+                        name + " has already rolled the dice in this turn. Wait for the next turn to roll again.");
             }
-            if (jailTurn == 3) {
-                System.out.println("Player " + name + " have been in Jail for 3 turns. Pay $50000 to get out.");
-                payJailFine(50000);
-                System.out.println("Player " + getName() + "'s new balacnce: $" + getCash());
-            }
+        }
+
+        if (jailTurn == 3) {
+            System.out.println("Player " + name + " have been in Jail for 3 turns. Pay $50000 to get out.");
+            payJailFine(50000);
+            System.out.println("Player " + getName() + "'s new balacnce: $" + getCash());
         }
 
     }
