@@ -21,12 +21,11 @@ public class Beach extends PropertySquare {
                 break;
         }
     }
-    
 
     @Override
     public void calculateUpgradeCost() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -42,9 +41,13 @@ public class Beach extends PropertySquare {
 
     @Override
     public int calculateSellValue() {
-        return (7 / 10) * getPropertyValue();
+        return (getPropertyValue() * 7) / 10;
     }
 
+    @Override
+    public String toString() {
 
-   
+        return "|Name: " + getName() + "|City buy cost: $" + getInitialValue() + "|";
+    }
+
 }
