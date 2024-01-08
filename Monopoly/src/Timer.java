@@ -49,5 +49,12 @@ public class Timer {
         return (System.currentTimeMillis() - startTime) / 1000;
     }
 
-    
+    public static void main(String[] args) {
+        Timer timer = new Timer(); // Set duration to 60 minutes
+
+        // Define the action to be executed at 10 minutes
+        timer.setTenMinAction(() -> System.out.println("1 minutes have passed!"));
+
+        timer.start();
+    }
 }
