@@ -6,64 +6,75 @@ public class City extends PropertySquare implements Comparable<City> {
     }
 
     @Override
-    public int calculateUpgradeCost() {
-        int totalUpgradeCost = 0;
+    public void calculateUpgradeCost() {
+        
         switch (getLevel()) {
             case 1:
-                totalUpgradeCost = getUpgradeCost() + 50000;
+                setUpgradeCost(getUpgradeCost() + 50000);
                 break;
             case 2:
-                totalUpgradeCost = getUpgradeCost() + 200000;
+                setUpgradeCost(getUpgradeCost() + 200000);
                 break;
             case 3:
-                totalUpgradeCost = getUpgradeCost() + 300000;
+                setUpgradeCost(getUpgradeCost() + 300000);
                 break;
             case 4:
-                totalUpgradeCost = getUpgradeCost() + 500000;
+                setUpgradeCost(getUpgradeCost() + 500000);
                 break;
             case 5:
-                totalUpgradeCost = getUpgradeCost() + 1000000;
+                setUpgradeCost(getUpgradeCost() + 1000000);
                 break;
             default:
                 break;
         }
-        return totalUpgradeCost;
+        
     }
-    
+
     @Override
     public void calculatePropertyValue(Player player) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     @Override
-    public int calculatePropertyValue() {
-        int totalCityValue = 0;
+    public void calculatePropertyValue() {
+        
         switch (getLevel()) {
             case 1:
-                totalCityValue = 100000 * getLevel() + getPropertyValue();
+                setPropertyValue(100000 * getLevel() + getInitialValue());
                 System.out.println("You upgrade " + getName() + " to level 1!");
                 break;
             case 2:
-                totalCityValue = 200000 * getLevel() + getPropertyValue();
+                setPropertyValue(200000 * getLevel() + getInitialValue());
                 System.out.println("You upgrade " + getName() + " to level 2!");
                 break;
             case 3:
-                totalCityValue = 400000 * getLevel() + getPropertyValue();
+                setPropertyValue(400000 * getLevel() + getInitialValue());
                 System.out.println("You upgrade " + getName() + " to level 3!");
                 break;
             case 4:
-                totalCityValue = 800000 * getLevel() + getPropertyValue();
+                setPropertyValue(800000 * getLevel() + getInitialValue());
                 System.out.println("You upgrade " + getName() + " to level 4!");
                 break;
             case 5:
-                totalCityValue = 1600000 * getLevel() + getPropertyValue();
+                setPropertyValue(1600000 * getLevel() + getInitialValue());
                 System.out.println("You upgrade " + getName() + " to level 5!");
                 break;
             default:
                 break;
         }
-        return totalCityValue;
+        
+    }
+
+    @Override
+    public void calculateVisitCost() {
+        setVisitCost(getPropertyValue()  / 2) ;
+    }
+
+    @Override
+    public int calculateSellValue() {
+
+        return  (getPropertyValue() * 7) / 10;
     }
 
     @Override
@@ -75,8 +86,8 @@ public class City extends PropertySquare implements Comparable<City> {
     @Override
     public String toString() {
 
-        return "Name: " + getName() + "\n" + "City value: " + getPropertyValue() + "\n" + "Upgrade cost: "
-                + calculateUpgradeCost();
+        return "|Name: " + getName() + "|City buy cost: $" + getInitialValue() + "|Upgrade cost: $"
+                + getUpgradeCost() + "|";
     }
 
 }
